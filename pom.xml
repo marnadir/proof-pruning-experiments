@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.liveontologies</groupId>
-	<artifactId>prune-pinpointing-experiments</artifactId>
+	<artifactId>prunpinpointing-experiments</artifactId>
 	<version>0.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
