@@ -310,18 +310,39 @@ public class RunProofExperiments {
 					System.gc();
 				}
 
-				final long localStartTimeMillis = System.currentTimeMillis();
-				final long localStopTimeMillis = timeOutMillis > 0
+				
+				//compute profs
+				long localStartTimeMillis = System.currentTimeMillis();
+			    long localStopTimeMillis = timeOutMillis > 0
 						? localStartTimeMillis + timeOutMillis
 						: Long.MAX_VALUE;
 
-				final long stopTimeMillis = localStopTimeMillis;
-				final TimeOutMonitor monitor = new TimeOutMonitor(
+				long stopTimeMillis = localStopTimeMillis;
+				final TimeOutMonitor monitorProofs = new TimeOutMonitor(
 						stopTimeMillis, onlyOneJustification);
-				
+		
+				experiment.addJustificationListener(monitorProofs);
 				
 				experiment.before(query);
-				experiment.computeProofs(query, monitor);
+				long startTimeNanos = System.nanoTime();
+				experiment.computeProofs(query, monitorProofs);
+				long runTimeNanos = System.nanoTime() - startTimeNanos;
+				double timeProofs = runTimeNanos/NANOS_IN_MILLIS;
+
+				experiment.removeJustificationListener(monitorProofs);
+
+				
+				//compute proofs
+				localStartTimeMillis = System.currentTimeMillis();
+				localStopTimeMillis = timeOutMillis > 0
+						? localStartTimeMillis + timeOutMillis
+						: Long.MAX_VALUE;
+	
+				stopTimeMillis = localStopTimeMillis;
+				final TimeOutMonitor monitorJust = new TimeOutMonitor(
+						stopTimeMillis, onlyOneJustification);
+				experiment.addJustificationListener(monitorJust);
+
 
 				final Recorder.RecordBuilder record = recorder.newRecord();
 				record.put("query", query);
@@ -329,20 +350,19 @@ public class RunProofExperiments {
 					recorder.flush();
 				}
 
-				experiment.addJustificationListener(monitor);
 
 				final Runnable runnable = new Runnable() {
 					@Override
 					public void run() {
 						try {
-							experiment.run(monitor);
+							experiment.run(monitorJust);
 						} catch (final ExperimentException e) {
 							throw new RuntimeException(e);
 						}
 					}
 				};
 				final Thread worker = new Thread(runnable);
-				final long startTimeNanos = System.nanoTime();
+				startTimeNanos = System.nanoTime();
 				worker.start();
 				// wait for timeout
 				try {
@@ -353,8 +373,8 @@ public class RunProofExperiments {
 					LOGGER_.warn("Waiting for the worker thread interruptet!",
 							e);
 				}
-				final long runTimeNanos = System.nanoTime() - startTimeNanos;
-				experiment.removeJustificationListener(monitor);
+				runTimeNanos = System.nanoTime() - startTimeNanos;
+				experiment.removeJustificationListener(monitorJust);
 				didSomeExperimentRun = true;
 				killIfAlive(worker);
 
@@ -363,8 +383,9 @@ public class RunProofExperiments {
 				final long usedMemory = totalMemory - runtime.freeMemory();
 				final boolean didTimeOut = localStartTimeMillis
 						+ (runTimeNanos / NANOS_IN_MILLIS) > stopTimeMillis;
-//				record.put("didTimeOut", didTimeOut);
+				record.put("didTimeOut", didTimeOut);
 				record.put("time", runTimeNanos / (NANOS_IN_MILLIS));
+				record.put("timePtoofs", timeProofs);
 //				record.put("nJust", nJust);
 //				record.put("usedMemory", usedMemory);
 
