@@ -91,7 +91,6 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 	private PrintWriter indexWriter_;
 	private OWLOntology ontology_;
 	private Set<OWLAxiom> axiomsOntology_;
-	private InterruptMonitor monitor;
 	private String pruneType_;
 	Proof<? extends I> prunedProof;
 	
@@ -107,9 +106,8 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 	
 	@Stat
 	public int nInferences;
-	@Stat
-	public  double Time2;
 	
+
 	
 	@Override
 	public final void init(final String[] args) throws ExperimentException {
