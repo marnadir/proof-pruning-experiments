@@ -375,19 +375,19 @@ public class RunProofExperiments {
 				}
 				runTimeNanos = System.nanoTime() - startTimeNanos;
 				experiment.removeJustificationListener(monitorJust);
+				final int nJust = monitorJust.getJustificationCount();
 				didSomeExperimentRun = true;
 				killIfAlive(worker);
 
-				final Runtime runtime = Runtime.getRuntime();
-				final long totalMemory = runtime.totalMemory();
-				final long usedMemory = totalMemory - runtime.freeMemory();
+			
+				
+				
 				final boolean didTimeOut = localStartTimeMillis
 						+ (runTimeNanos / NANOS_IN_MILLIS) > stopTimeMillis;
 				record.put("didTimeOut", didTimeOut);
 				record.put("time", runTimeNanos / (NANOS_IN_MILLIS));
 				record.put("timePtoofs", timeProofs);
-//				record.put("nJust", nJust);
-//				record.put("usedMemory", usedMemory);
+				record.put("nJust", nJust);
 
 				experiment.after();
 
