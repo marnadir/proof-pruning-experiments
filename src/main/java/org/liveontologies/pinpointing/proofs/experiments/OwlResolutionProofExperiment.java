@@ -79,10 +79,10 @@ public class OwlResolutionProofExperiment extends
 
 	@Override
 	protected Proof<? extends Inference<OWLAxiom>>computationPruning(
-			Proof<? extends Inference<OWLAxiom>> proof, InterruptMonitor monitor, OWLAxiom query, Set<Object> ontology,Set<Object> justUnion)
+			Proof<? extends Inference<OWLAxiom>> proof, InterruptMonitor monitor, OWLAxiom query,Set<Object> justUnion)
 			throws ExperimentException {
 		
-		return new PrunedProofComputation<Object, Inference<OWLAxiom>>(proof, monitor, pruneType, query, ontology,justUnion).computePrune();
+		return new PrunedProofComputation<Object, Inference<OWLAxiom>>(proof, monitor, pruneType, query,justUnion).computePrune();
 	}
 
 	@Override

@@ -48,11 +48,6 @@ import org.liveontologies.puli.pinpointing.PrunedProofComputation.PruneType;
 import org.liveontologies.puli.statistics.NestedStats;
 import org.liveontologies.puli.statistics.Stat;
 import org.liveontologies.puli.statistics.Stats;
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,8 +84,6 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 	private File outputDir_;
 	protected File ontologyFile_;
 	private PrintWriter indexWriter_;
-	private OWLOntology ontology_;
-	private Set<OWLAxiom> axiomsOntology_;
 	private String pruneType_;
 	Proof<? extends I> prunedProof;
 	
@@ -138,15 +131,6 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 				this.indexWriter_ = new PrintWriter(new FileWriter(new File(outputDir_, INDEX_FILE_NAME), true));
 			}
 			init(options);
-			
-			
-			OWLOntologyManager manager_ = OWLManager.createOWLOntologyManager();
-			try {
-				ontology_ = manager_.loadOntologyFromOntologyDocument(options.ontologyFile);
-			} catch (OWLOntologyCreationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			proofProvider_ = newProofProvider();
 
 		} catch (final SecurityException e) {
@@ -195,7 +179,7 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 	protected abstract ProofProvider<String, C, I, A> newProofProvider() throws ExperimentException;
 
 	protected  abstract Proof<? extends I> computationPruning(final Proof<? extends I> proof,
-			InterruptMonitor monitor,C query,Set<Object> ontology,Set<Object> just)
+			InterruptMonitor monitor,C query,Set<Object> just)
 		throws ExperimentException;
 	
 
@@ -234,9 +218,8 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 		if(pruneType_.equals("JUST_PRUNE")) {
 			run(monitor);
 		}
-		axiomsOntology_=ontology_.getAxioms();	
 		prunedProof=computationPruning(proof_.getProof(), monitor, proof_.getQuery(),
-		new HashSet<Object>(axiomsOntology_),(Set<Object>) justificationListener_.getUnionJustif());
+		(Set<Object>) justificationListener_.getUnionJustif());
 		nInferences = Proofs.countInferences(prunedProof, proof_.getQuery());			
 	}
 	
@@ -319,7 +302,7 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 			justifications_.add(justification);
 		}
 
-		
+		@Override
 		public Collection<Set<A>> getJustifications() {
 			return justifications_;
 		}

@@ -81,8 +81,8 @@ public class ElkResolutionProofExperiment extends
 
 	@Override
 	protected Proof<? extends Inference<Object>> computationPruning(Proof<? extends Inference<Object>> proof,
-			InterruptMonitor monitor, Object query, Set<Object> ontology,Set<Object> just) throws ExperimentException {
-		return new PrunedProofComputation<Object, Inference<Object>>(proof, monitor, pruneType, query, ontology,just).computePrune();
+			InterruptMonitor monitor, Object query, Set<Object> just) throws ExperimentException {
+		return new PrunedProofComputation<Object, Inference<Object>>(proof, monitor, pruneType, query,just).computePrune();
 	}
 	
 	@Override
