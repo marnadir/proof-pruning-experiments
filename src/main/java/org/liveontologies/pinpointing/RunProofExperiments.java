@@ -272,7 +272,7 @@ public class RunProofExperiments {
 			final Recorder recorder = new Recorder(recordWriter);
 
 			final long globalStartTimeMillis = System.currentTimeMillis();
-			final long globalStopTimeMillis = globalTimeOutMillis > 0
+			long globalStopTimeMillis = globalTimeOutMillis > 0
 					? globalStartTimeMillis + globalTimeOutMillis
 					: Long.MAX_VALUE;
 
@@ -328,6 +328,7 @@ public class RunProofExperiments {
 				experiment.computeProofs(query, monitorProofs);
 				long runTimeNanos = System.nanoTime() - startTimeNanos;
 				double timeProofs = runTimeNanos/NANOS_IN_MILLIS;
+				globalStopTimeMillis+=timeProofs;
 
 				experiment.removeJustificationListener(monitorProofs);
 
