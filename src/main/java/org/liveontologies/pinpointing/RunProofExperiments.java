@@ -328,7 +328,6 @@ public class RunProofExperiments {
 				experiment.computeProofs(query, monitorProofs);
 				long runTimeNanos = System.nanoTime() - startTimeNanos;
 				double timeProofs = runTimeNanos/NANOS_IN_MILLIS;
-				globalStopTimeMillis+=timeProofs;
 
 				experiment.removeJustificationListener(monitorProofs);
 
