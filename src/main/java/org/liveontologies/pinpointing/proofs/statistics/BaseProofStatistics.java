@@ -35,6 +35,7 @@ import org.liveontologies.proofs.ProofProvider;
 import org.liveontologies.puli.Inference;
 import org.liveontologies.puli.Proof;
 import org.liveontologies.puli.statistics.NestedStats;
+import org.liveontologies.puli.statistics.PrunedProofStats;
 import org.liveontologies.puli.statistics.Stat;
 import org.liveontologies.puli.statistics.Stats;
 import org.slf4j.Logger;
@@ -171,13 +172,13 @@ public abstract class BaseProofStatistics<O extends BaseProofStatistics.Options,
 	 */
 	protected abstract ProofProvider<String, C, I, A> newProofProvider() throws ExperimentException;
 
-	protected  abstract int computationEss(final Proof<? extends I> proof,C query)
+	protected  abstract int computationEss(final PrunedProofStats<C, Inference<? extends C>> prunedProofStats)
 		throws ExperimentException;
 	
-	protected  abstract int computationDerEss(final Proof<? extends I> proof,C query)
+	protected  abstract int computationDerEss(final PrunedProofStats<C, Inference<? extends C>> prunedProofStats)
 			throws ExperimentException;
 	
-	protected  abstract int computationInfCycl(final Proof<? extends I> proof,C query)
+	protected  abstract int computationInfCycl(final PrunedProofStats<C, Inference<? extends C>> prunedProofStats)
 			throws ExperimentException;
 	
 	@Override
@@ -198,9 +199,11 @@ public abstract class BaseProofStatistics<O extends BaseProofStatistics.Options,
 	@Override
 	public void run() throws ExperimentException {
 		
-		nEssential=computationEss(proof_.getProof(), proof_.getQuery());
-		nDerivEss=computationDerEss(proof_.getProof(), proof_.getQuery());
-		nInfCycl=computationInfCycl(proof_.getProof(), proof_.getQuery());
+		PrunedProofStats<C, Inference<? extends C>> stats=new PrunedProofStats<C, Inference<? extends C>> (proof_.getProof(), proof_.getQuery());
+
+		nEssential=computationEss( stats);
+		nDerivEss=computationDerEss(stats);
+		nInfCycl=computationInfCycl(stats);
 
 	}
 

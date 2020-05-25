@@ -24,7 +24,6 @@ package org.liveontologies.pinpointing.proofs.statistics;
 
 import org.liveontologies.pinpointing.experiments.ExperimentException;
 import org.liveontologies.puli.Inference;
-import org.liveontologies.puli.Proof;
 import org.liveontologies.puli.statistics.PrunedProofStats;
 import org.semanticweb.owlapi.model.OWLAxiom;
 
@@ -59,24 +58,29 @@ public class OwlResolutionProofStatistics extends
 	}
 
 	@Override
-	protected int computationEss(
-			Proof<? extends Inference<OWLAxiom>> proof,OWLAxiom query) throws ExperimentException {
-		return  new PrunedProofStats<OWLAxiom, Inference<OWLAxiom>>(proof, query).computeEss();
-	}
-
-	@Override
-	protected int computationDerEss(Proof<? extends Inference<OWLAxiom>> proof, OWLAxiom query)
+	protected int computationEss(PrunedProofStats<OWLAxiom, Inference<? extends OWLAxiom>> prunedProofStats)
 			throws ExperimentException {
-		return  new PrunedProofStats<OWLAxiom, Inference<OWLAxiom>>(proof, query).computeDerivEss();
+		
+		return prunedProofStats.computeEss();
 
 	}
 
 	@Override
-	protected int computationInfCycl(Proof<? extends Inference<OWLAxiom>> proof, OWLAxiom query)
+	protected int computationDerEss(PrunedProofStats<OWLAxiom, Inference<? extends OWLAxiom>> prunedProofStats)
 			throws ExperimentException {
-		return  new PrunedProofStats<OWLAxiom, Inference<OWLAxiom>>(proof, query).computeInfCycl();
+		
+		return prunedProofStats.computeDerivEss();
 
 	}
+
+	@Override
+	protected int computationInfCycl(PrunedProofStats<OWLAxiom, Inference<? extends OWLAxiom>> prunedProofStats)
+			throws ExperimentException {
+		
+		return prunedProofStats.computeInfCycl();
+	}
+
+
 
 
 
