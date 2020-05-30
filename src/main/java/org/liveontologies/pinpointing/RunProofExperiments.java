@@ -66,6 +66,7 @@ public class RunProofExperiments {
 	public static final String QUERIES_OPT = "queries";
 	public static final String EXPERIMENT_OPT = "exp";
 	public static final String EXPERIMENT_ARGS_OPT = "arg";
+	public static final String ENUM_JUST = "j";
 
 	public static class Options {
 		@Arg(dest = RECORD_OPT)
@@ -88,6 +89,8 @@ public class RunProofExperiments {
 		public File queryFile;
 		@Arg(dest = EXPERIMENT_OPT)
 		public String experimentClassName;
+		@Arg(dest = ENUM_JUST)
+		public String enumJust;
 		@Arg(dest = EXPERIMENT_ARGS_OPT)
 		public String[] experimentArgs;
 	}
@@ -121,6 +124,7 @@ public class RunProofExperiments {
 				.type(Arguments.fileType().verifyExists().verifyCanRead())
 				.help("query file");
 		parser.addArgument(EXPERIMENT_OPT).help("experiment class name");
+		parser.addArgument("-"+ENUM_JUST).help("enumerition of justifications");
 		parser.addArgument(EXPERIMENT_ARGS_OPT).nargs("*")
 				.help("experiment arguments");
 
@@ -161,6 +165,8 @@ public class RunProofExperiments {
 			LOGGER_.info("queryFile: {}", queryFile);
 			final String experimentClassName = opt.experimentClassName;
 			LOGGER_.info("experimentClassName: {}", experimentClassName);
+			final String enumJust = opt.enumJust;
+			LOGGER_.info("enumerationJusts: {}", enumJust);
 			final String[] experimentArgs = opt.experimentArgs;
 			LOGGER_.info("experimentArgs: {}", Arrays.toString(experimentArgs));
 
@@ -176,13 +182,13 @@ public class RunProofExperiments {
 				LOGGER_.info("Warm Up");
 				run(experiment, experimentArgs, queryFile, timeOutMillis,
 						warmupTimeOut, 0, runGc, onlyOneJustification,
-						resetInterval, nullPrintStream, null);
+						resetInterval,enumJust, nullPrintStream, null);
 			}
 
 			LOGGER_.info("Actual Experiment Run");
 			run(experiment, experimentArgs, queryFile, timeOutMillis,
 					globalTimeOutMillis, 0, runGc, onlyOneJustification,
-					resetInterval, progress ? System.out : nullPrintStream,
+					resetInterval, enumJust,progress ? System.out : nullPrintStream,
 					recordWriter);
 
 		} catch (final ExperimentException e) {
@@ -246,10 +252,12 @@ public class RunProofExperiments {
 			final long timeOutMillis, final long globalTimeOutMillis,
 			final int maxIterations, final boolean runGc,
 			final boolean onlyOneJustification, final int resetInterval,
+			final String enumJust,
 			final PrintStream progressOut, final PrintWriter recordWriter)
 			throws IOException, ExperimentException {
 
 		experiment.init(experimentArgs);
+		final boolean computeJust=enumJust.contentEquals("enumJust");
 
 		Progress progress = null;
 
@@ -354,9 +362,11 @@ public class RunProofExperiments {
 				final Runnable runnable = new Runnable() {
 					@Override
 					public void run() {
-						try {
-							experiment.run(monitorJust);
-						} catch (final ExperimentException e) {
+						try { 
+							if(computeJust) {
+								experiment.run(monitorJust);
+							}
+						}catch (final ExperimentException e) {
 							throw new RuntimeException(e);
 						}
 					}
@@ -385,9 +395,11 @@ public class RunProofExperiments {
 				final boolean didTimeOut = localStartTimeMillis
 						+ (runTimeNanos / NANOS_IN_MILLIS) > stopTimeMillis;
 				record.put("didTimeOut", didTimeOut);
-				record.put("time", runTimeNanos / (NANOS_IN_MILLIS));
+				if(computeJust) {
+					record.put("time", runTimeNanos / (NANOS_IN_MILLIS));
+					record.put("nJust", nJust);
+				}
 				record.put("timePtoofs", timeProofs);
-				record.put("nJust", nJust);
 
 				experiment.after();
 
