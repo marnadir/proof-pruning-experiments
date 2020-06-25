@@ -100,6 +100,8 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 	@Stat
 	public int nInferences;
 	
+	@Stat
+	public long timeProof;
 
 	
 	@Override
@@ -218,8 +220,13 @@ public abstract class BaseProofExperiment<O extends BaseProofExperiment.Options,
 		if(pruneType_.equals("JUST_PRUNE")) {
 			run(monitor);
 		}
+		long startTime = System.currentTimeMillis();
 		prunedProof=computationPruning(proof_.getProof(), monitor, proof_.getQuery(),
 		(Set<Object>) justificationListener_.getUnionJustif());
+		long stopTime = System.currentTimeMillis();
+		
+		timeProof = (long) ((stopTime - startTime)/NANOS_IN_MILLIS);
+
 		nInferences = Proofs.countInferences(prunedProof, proof_.getQuery());			
 	}
 	
