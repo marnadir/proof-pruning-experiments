@@ -50,6 +50,14 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
+/**
+ * Class that run the experiments for statistics about pruning proofs strategies
+ * 
+ * @author Marouane Nadir
+ *
+
+ */
+
 public class PrunedProofStats {
 
 	private static final Logger LOGGER_ = LoggerFactory

@@ -23,6 +23,15 @@ package org.liveontologies.pinpointing;
  */
 
 
+/**
+ * Class that run the experiments for pruning proofs strategies
+ * 
+ * @author Marouane Nadir
+ *
+
+ */
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,6 +58,8 @@ import net.sourceforge.argparse4j.annotation.Arg;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+
+
 
 public class RunProofExperiments {
 
