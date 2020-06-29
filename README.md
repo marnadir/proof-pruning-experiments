@@ -2,4 +2,4 @@
 
 Experiments for pruning of proofs.
 
-See [wiki](https://github.com/liveontologies/pinpointing-experiments/wiki) for more info.
+See [wiki](https://github.com/liveontologies/prunpinpointing-experiments/wiki) for more info.
